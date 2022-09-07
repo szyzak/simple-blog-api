@@ -4,6 +4,8 @@ namespace App\Modules\v1\Auth\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Modules\v1\Auth\Requests\LoginRequest;
+use App\Modules\v1\Auth\Requests\RegisterRequest;
+use App\Modules\v1\Users\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\UnauthorizedException;
 
@@ -11,7 +13,7 @@ class AuthController extends Controller
 {
 	public function __construct()
 	{
-		$this->middleware('auth:api', ['except' => ['login']]);
+		$this->middleware('auth:api', ['except' => ['login', 'register']]);
 	}
 
 	public function login(LoginRequest $request): JsonResponse
@@ -23,6 +25,12 @@ class AuthController extends Controller
 		}
 
 		return $this->respondWithToken($token);
+	}
+
+	public function register(RegisterRequest $request): JsonResponse
+	{
+		$user = User::query()->create($request->validated());
+		return response()->json($user->toArray());
 	}
 
 	public function me(): JsonResponse
