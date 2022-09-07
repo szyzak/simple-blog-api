@@ -2,14 +2,15 @@
 
 namespace App\Modules\v1\Users\Models;
 
+use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
+use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
 
-class User extends Authenticatable
+class User extends Authenticatable implements JWTSubject
 {
-	use HasApiTokens, HasFactory, Notifiable;
+	use HasFactory, Notifiable;
 
 	/**
 	 * The attributes that are mass assignable.
@@ -30,4 +31,19 @@ class User extends Authenticatable
 	protected $hidden = [
 		'password',
 	];
+
+	public function getJWTIdentifier()
+	{
+		return $this->getKey();
+	}
+
+	public function getJWTCustomClaims(): array
+	{
+		return [];
+	}
+
+	protected static function newFactory(): UserFactory
+	{
+		return UserFactory::new();
+	}
 }

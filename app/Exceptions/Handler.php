@@ -5,8 +5,11 @@ namespace App\Exceptions;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Http\Request;
+use Illuminate\Validation\UnauthorizedException;
+use Illuminate\Validation\ValidationException;
 use Psr\Log\LogLevel;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -47,19 +50,27 @@ class Handler extends ExceptionHandler
 	 */
 	public function register()
 	{
-		$this->reportable(function (Throwable $e) {
-			//
+		$this->renderable(function (MethodNotAllowedHttpException $e) {
+			return response()->json(['message' => $e->getMessage()], Response::HTTP_METHOD_NOT_ALLOWED);
+		});
+
+		$this->renderable(function (UnauthorizedException $e) {
+			return response()->json(['message' => 'Unauthorized'], Response::HTTP_UNAUTHORIZED);
+		});
+
+		$this->renderable(function (ValidationException $e) {
+			return response()->json(['message' => $e->errors()], Response::HTTP_UNPROCESSABLE_ENTITY);
 		});
 	}
 
 	/**
 	 * Convert an authentication exception into a response.
 	 *
-	 * @param  Request  $request
-	 * @param AuthenticationException $exception
+	 * @param Request $request
+	 * @param AuthenticationException|UnauthorizedException $exception
 	 * @return Response
 	 */
-	protected function unauthenticated($request, AuthenticationException $exception): Response
+	protected function unauthenticated($request, AuthenticationException|UnauthorizedException $exception): Response
 	{
 		return response()->json(['message' => $exception->getMessage()], Response::HTTP_UNAUTHORIZED);
 	}

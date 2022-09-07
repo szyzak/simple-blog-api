@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-	return $request->user();
-});
+
+
+//todo: automatic discovery?
+Route::prefix('v1')->group(base_path('app/Modules/v1/Auth/Routes/auth.php'));
+
