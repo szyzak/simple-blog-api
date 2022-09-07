@@ -10,6 +10,7 @@ use Illuminate\Validation\ValidationException;
 use Psr\Log\LogLevel;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -60,6 +61,10 @@ class Handler extends ExceptionHandler
 
 		$this->renderable(function (ValidationException $e) {
 			return response()->json(['message' => $e->errors()], Response::HTTP_UNPROCESSABLE_ENTITY);
+		});
+
+		$this->renderable(function (NotFoundHttpException $e) {
+			return response()->json(['message' => 'Not found'], Response::HTTP_NOT_FOUND);
 		});
 	}
 
