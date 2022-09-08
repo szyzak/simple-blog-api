@@ -4,6 +4,7 @@ namespace App\Modules\v1\Users\Repositories;
 
 use App\Modules\v1\Users\Contracts\UserRepositoryInterface;
 use App\Modules\v1\Users\Models\User;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class EloquentUserRepository implements UserRepositoryInterface
 {
@@ -13,6 +14,11 @@ class EloquentUserRepository implements UserRepositoryInterface
 		$user = User::query()->create($attributes);
 
 		return $user;
+	}
+
+	public function getAllWithPagination(int $perPage, int $page): LengthAwarePaginator
+	{
+		return User::query()->paginate($perPage, ['*'], 'page', $page);
 	}
 
 	public function getById(int $userId): ?User
@@ -28,5 +34,10 @@ class EloquentUserRepository implements UserRepositoryInterface
 		User::query()->whereKey($userId)->update($attributes);
 
 		return $this->getById($userId);
+	}
+
+	public function delete(int $userId): void
+	{
+		User::query()->whereKey($userId)->delete();
 	}
 }
