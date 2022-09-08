@@ -22,7 +22,6 @@ class PostFactory extends Factory
 		return [
 			'title' => fake()->title(),
 			'content' => fake()->paragraph(),
-			'thumbnail_id' => 1,
 		];
 	}
 }

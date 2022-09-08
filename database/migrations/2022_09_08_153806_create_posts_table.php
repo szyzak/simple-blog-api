@@ -11,8 +11,7 @@ return new class extends Migration {
 			$table->id();
 			$table->string('title');
 			$table->text('content');
-			//todo: foreign key? faster without it
-			$table->unsignedInteger('thumbnail_id');
+			$table->string('image_name', 50)->nullable();
 			$table->timestamps();
 		});
 	}

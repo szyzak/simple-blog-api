@@ -5,10 +5,13 @@ namespace App\Modules\v1\Posts\Models;
 use Database\Factories\PostFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * @property int $id
  * @property string $label
+ * @property string $image_name
+ * @property string $image_url
  */
 class Post extends Model
 {
@@ -22,8 +25,21 @@ class Post extends Model
 	protected $fillable = [
 		'title',
 		'content',
-		'thumbnail_id',
+		'image_name',
 	];
+
+	protected $appends = ['image_url'];
+
+	/** @noinspection PhpUnused */
+	public function getImageUrlAttribute(): string
+	{
+		return Storage::disk('images')->url("posts/{$this->id}/{$this->image_name}");
+	}
+
+	public function getImageDirectory(): string
+	{
+		return public_path("images/posts/{$this->id}");
+	}
 
 	protected static function newFactory(): PostFactory
 	{

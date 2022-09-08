@@ -5,10 +5,11 @@ namespace App\Modules\v1\Posts\Controllers;
 use App\Contracts\PaginationServiceInterface;
 use App\Http\Controllers\Controller;
 use App\Modules\v1\Posts\Contracts\PostRepositoryInterface;
-use App\Modules\v1\Posts\Requests\StorePostRequest;
-use App\Modules\v1\Posts\Requests\UpdatePostRequest;
+use App\Modules\v1\Posts\Requests\PostRequest;
+use App\Services\ImagesService;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\UploadedFile;
 use Symfony\Component\HttpFoundation\Response;
 
 class PostsController extends Controller
@@ -37,16 +38,22 @@ class PostsController extends Controller
 		return response()->json($post);
 	}
 
-	public function store(StorePostRequest $request, PostRepositoryInterface $repository): JsonResponse
+	public function store(PostRequest $request, PostRepositoryInterface $repository, ImagesService $imagesService): JsonResponse
 	{
-		$post = $repository->insert($request->validated() + ['thumbnail_id' => 1]);
+		$post = $repository->insert($request->validated());
 
-		//todo: handle image upload
+		/** @var UploadedFile $uploadedImage */
+		$uploadedImage = $request->image;
+
+		$imageName = $imagesService->storeImage($uploadedImage, $post->getImageDirectory());
+		$post = $repository->update($post->id, ['image_name' => $imageName]);
 
 		return response()->json($post);
 	}
 
-	public function update(int $postId, UpdatePostRequest $request, PostRepositoryInterface $repository): JsonResponse
+	public function update(
+		int $postId, PostRequest $request, PostRepositoryInterface $repository, ImagesService $imagesService
+	): JsonResponse
 	{
 		$post = $repository->getById($postId);
 
@@ -54,7 +61,19 @@ class PostsController extends Controller
 			throw new ModelNotFoundException();
 		}
 
-		$updatedPost = $repository->update($post->id, $request->validated());
+		/** @var UploadedFile $uploadedImage */
+		$uploadedImage = $request->image;
+		$request->offsetUnset('image');
+
+		$imageName = $post->image_name;
+
+		if ($uploadedImage) {
+			$imageName = $imagesService->storeImage($uploadedImage, $post->getImageDirectory());
+		}
+
+		//fixme: get rid of uploadedFile in more elegant way
+		$attributes = array_diff_key($request->validated(), ['image' => '']);
+		$updatedPost = $repository->update($post->id, array_merge($attributes, ['image_name' => $imageName]));
 
 		return response()->json($updatedPost);
 	}
