@@ -45,7 +45,7 @@ class UsersController extends Controller
 		return response()->json($updatedUser);
 	}
 
-	public function destroy(int $userId, UpdateUserRequest $request, UserRepositoryInterface $repository): JsonResponse
+	public function destroy(int $userId, UserRepositoryInterface $repository): JsonResponse
 	{
 		$user = $repository->getById($userId);
 
