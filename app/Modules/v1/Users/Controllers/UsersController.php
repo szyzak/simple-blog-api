@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\Response;
 class UsersController extends Controller
 {
 	public function index(
-		IndexUsersRequest $request, UserRepositoryInterface $repository, PaginationServiceInterface $paginationService
+		UserRepositoryInterface $repository, PaginationServiceInterface $paginationService
 	): JsonResponse
 	{
 		$users = $repository->getAllWithPagination($paginationService->getLimit(), $paginationService->getCurrentPage());
