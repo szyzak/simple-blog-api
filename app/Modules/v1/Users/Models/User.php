@@ -3,7 +3,9 @@
 namespace App\Modules\v1\Users\Models;
 
 use App\Enums\Role;
+use App\Notifications\ResetPassword;
 use Database\Factories\UserFactory;
+use Illuminate\Auth\Passwords\CanResetPassword;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -16,7 +18,7 @@ use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
  */
 class User extends Authenticatable implements JWTSubject
 {
-	use HasFactory, Notifiable;
+	use HasFactory, Notifiable, CanResetPassword;
 
 	/**
 	 * The attributes that are mass assignable.
@@ -75,6 +77,11 @@ class User extends Authenticatable implements JWTSubject
 	public function isRegularUser(): bool
 	{
 		return $this->role === Role::User->value;
+	}
+
+	public function sendPasswordResetNotification($token)
+	{
+		$this->notify(new ResetPassword($token));
 	}
 
 	protected static function newFactory(): UserFactory
