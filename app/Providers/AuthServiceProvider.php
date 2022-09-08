@@ -20,12 +20,18 @@ class AuthServiceProvider extends ServiceProvider
 	 * Register any authentication / authorization services.
 	 *
 	 * @return void
+	 * @noinspection PhpInconsistentReturnPointsInspection
 	 */
 	public function boot()
 	{
 		$this->registerPolicies();
 
-		Gate::before(fn(User $user) => $user->isAdmin());
+		Gate::before(function (User $user) {
+			if($user->isAdmin()) {
+				return TRUE;
+			}
+		});
+
 		Gate::define('login', fn(User $user) => $user->isEditor());
 	}
 }
