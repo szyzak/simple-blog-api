@@ -33,5 +33,6 @@ class AuthServiceProvider extends ServiceProvider
 		});
 
 		Gate::define('login', fn(User $user) => $user->isEditor());
+		Gate::define('manage-posts', fn(User $user) => $user->isEditor());
 	}
 }

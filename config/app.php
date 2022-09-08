@@ -1,5 +1,6 @@
 <?php
 
+use App\Modules\v1\Posts\Providers\PostsRepositoryServiceProvider;
 use App\Modules\v1\Users\Providers\UsersRepositoryServiceProvider;
 use Illuminate\Support\Facades\Facade;
 
@@ -196,6 +197,7 @@ return [
 		App\Providers\EventServiceProvider::class,
 		App\Providers\RouteServiceProvider::class,
 		UsersRepositoryServiceProvider::class,
+		PostsRepositoryServiceProvider::class,
 
 	],
 

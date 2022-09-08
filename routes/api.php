@@ -19,4 +19,5 @@ use Illuminate\Support\Facades\Route;
 //todo: automatic discovery?
 Route::prefix('v1')->group(base_path('app/Modules/v1/Auth/Routes/auth.php'));
 Route::prefix('v1')->group(base_path('app/Modules/v1/Users/Routes/users.php'));
+Route::prefix('v1')->group(base_path('app/Modules/v1/Posts/Routes/posts.php'));
 

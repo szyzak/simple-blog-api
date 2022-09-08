@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Enums\Role;
+use App\Modules\v1\Posts\Models\Post;
 use App\Modules\v1\Users\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -32,5 +33,7 @@ class DatabaseSeeder extends Seeder
 			'email' => 'admin@example.com',
 			'role' => Role::Admin->value,
 		]);
+
+		Post::factory()->times(5)->create();
 	}
 }
