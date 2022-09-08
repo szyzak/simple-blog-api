@@ -3,20 +3,20 @@
 namespace App\Modules\v1\Posts\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Gate;
 
-class UpdatePostRequest extends FormRequest
+class PostRequest extends FormRequest
 {
 	public function authorize(): bool
 	{
-		return Gate::allows('posts_update');
+		return TRUE;
 	}
 
 	public function rules(): array
 	{
 		return [
 			'title' => ['required'],
-			'content' => ['required']
+			'content' => ['required'],
+			'image' => ['sometimes', 'image', 'max:4096'],
 		];
 	}
 }
