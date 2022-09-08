@@ -14,4 +14,19 @@ class EloquentUserRepository implements UserRepositoryInterface
 
 		return $user;
 	}
+
+	public function getById(int $userId): ?User
+	{
+		/** @var User $user */
+		$user = User::query()->find($userId);
+
+		return $user;
+	}
+
+	public function update(int $userId, array $attributes): User
+	{
+		User::query()->whereKey($userId)->update($attributes);
+
+		return $this->getById($userId);
+	}
 }
