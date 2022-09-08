@@ -5,7 +5,7 @@ namespace App\Modules\v1\Auth\Controllers;
 use App\Http\Controllers\Controller;
 use App\Modules\v1\Auth\Requests\LoginRequest;
 use App\Modules\v1\Auth\Requests\RegisterRequest;
-use App\Modules\v1\Users\Models\User;
+use App\Modules\v1\Users\Contracts\UserRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\UnauthorizedException;
 
@@ -27,9 +27,9 @@ class AuthController extends Controller
 		return $this->respondWithToken($token);
 	}
 
-	public function register(RegisterRequest $request): JsonResponse
+	public function register(RegisterRequest $request, UserRepositoryInterface $repository): JsonResponse
 	{
-		$user = User::query()->create($request->validated());
+		$user = $repository->insert($request->validated());
 		return response()->json($user->toArray());
 	}
 
