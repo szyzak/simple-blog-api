@@ -7,6 +7,7 @@ use App\Modules\v1\Auth\Requests\LoginRequest;
 use App\Modules\v1\Auth\Requests\RegisterRequest;
 use App\Modules\v1\Users\Models\User;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\UnauthorizedException;
 
 class AuthController extends Controller
@@ -23,6 +24,8 @@ class AuthController extends Controller
 		if (!$token = auth()->attempt($credentials)) {
 			throw new UnauthorizedException();
 		}
+
+		Gate::authorize('login');
 
 		return $this->respondWithToken($token);
 	}

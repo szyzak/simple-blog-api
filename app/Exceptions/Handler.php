@@ -2,6 +2,7 @@
 
 namespace App\Exceptions;
 
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Http\Request;
@@ -9,6 +10,7 @@ use Illuminate\Validation\UnauthorizedException;
 use Illuminate\Validation\ValidationException;
 use Psr\Log\LogLevel;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
@@ -51,6 +53,10 @@ class Handler extends ExceptionHandler
 	 */
 	public function register()
 	{
+		$this->renderable(function (AuthorizationException $e) {
+			return response()->json(['message' => 'Permissions not allowed action', Response::HTTP_FORBIDDEN]);
+		});
+
 		$this->renderable(function (MethodNotAllowedHttpException $e) {
 			return response()->json(['message' => $e->getMessage()], Response::HTTP_METHOD_NOT_ALLOWED);
 		});
@@ -66,16 +72,20 @@ class Handler extends ExceptionHandler
 		$this->renderable(function (NotFoundHttpException $e) {
 			return response()->json(['message' => 'Not found'], Response::HTTP_NOT_FOUND);
 		});
+
+		$this->renderable(function (AccessDeniedHttpException $e) {
+			return response()->json(['message' => 'Access denied'], Response::HTTP_FORBIDDEN);
+		});
 	}
 
 	/**
 	 * Convert an authentication exception into a response.
 	 *
 	 * @param Request $request
-	 * @param AuthenticationException|UnauthorizedException $exception
+	 * @param AuthenticationException $exception
 	 * @return Response
 	 */
-	protected function unauthenticated($request, AuthenticationException|UnauthorizedException $exception): Response
+	protected function unauthenticated($request, AuthenticationException $exception): Response
 	{
 		return response()->json(['message' => $exception->getMessage()], Response::HTTP_UNAUTHORIZED);
 	}

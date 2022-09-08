@@ -2,6 +2,7 @@
 
 namespace App\Modules\v1\Users\Models;
 
+use App\Enums\Role;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -9,6 +10,9 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;
 use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
 
+/**
+ * @property string $role
+ */
 class User extends Authenticatable implements JWTSubject
 {
 	use HasFactory, Notifiable;
@@ -55,6 +59,21 @@ class User extends Authenticatable implements JWTSubject
 	}
 
 	#endregion Mutators
+
+	public function isEditor(): bool
+	{
+		return $this->role === Role::Editor->value;
+	}
+
+	public function isAdmin(): bool
+	{
+		return $this->role === Role::Admin->value;
+	}
+
+	public function isRegularUser(): bool
+	{
+		return $this->role === Role::User->value;
+	}
 
 	protected static function newFactory(): UserFactory
 	{

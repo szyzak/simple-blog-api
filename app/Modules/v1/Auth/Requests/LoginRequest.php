@@ -6,7 +6,7 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class LoginRequest extends FormRequest
 {
-	public function rules()
+	public function rules(): array
 	{
 		return [
 			'email' => 'required',
@@ -14,8 +14,9 @@ class LoginRequest extends FormRequest
 		];
 	}
 
-	public function authorize()
+	public function authorize(): bool
 	{
+		// User is not accessible yet to check for role.
 		return TRUE;
 	}
 }
