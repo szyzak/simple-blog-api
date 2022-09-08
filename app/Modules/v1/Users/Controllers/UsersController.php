@@ -5,8 +5,7 @@ namespace App\Modules\v1\Users\Controllers;
 use App\Contracts\PaginationServiceInterface;
 use App\Http\Controllers\Controller;
 use App\Modules\v1\Users\Contracts\UserRepositoryInterface;
-use App\Modules\v1\Users\Requests\IndexUsersRequest;
-use App\Modules\v1\Users\Requests\UpdateUserRequest;
+use App\Modules\v1\Users\Requests\UserRequest;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -32,7 +31,14 @@ class UsersController extends Controller
 		return response()->json($user);
 	}
 
-	public function update(int $userId, UpdateUserRequest $request, UserRepositoryInterface $repository): JsonResponse
+	public function store(UserRequest $request, UserRepositoryInterface $repository): JsonResponse
+	{
+		$user = $repository->insert($request->validated());
+
+		return response()->json($user);
+	}
+
+	public function update(int $userId, UserRequest $request, UserRepositoryInterface $repository): JsonResponse
 	{
 		$user = $repository->getById($userId);
 
