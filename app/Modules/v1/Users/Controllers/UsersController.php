@@ -3,23 +3,22 @@
 namespace App\Modules\v1\Users\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Modules\v1\Auth\Requests\LoginRequest;
-use App\Modules\v1\Auth\Requests\RegisterRequest;
-use App\Modules\v1\Users\Models\User;
+use App\Modules\v1\Users\Contracts\UserRepositoryInterface;
 use App\Modules\v1\Users\Requests\UpdateUserRequest;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Gate;
-use Illuminate\Validation\UnauthorizedException;
 
 class UsersController extends Controller
 {
-	public function __construct()
+	public function update(int $userId, UpdateUserRequest $request, UserRepositoryInterface $repository): JsonResponse
 	{
-		$this->middleware('auth:api', ['except' => ['login', 'register']]);
-	}
+		$user = $repository->getById($userId);
 
-	public function update(UpdateUserRequest $request)
-	{
+		if (!$user) {
+			throw new ModelNotFoundException();
+		}
+		$updatedUser = $repository->update($user->id, $request->validated());
 
+		return response()->json($updatedUser->toArray());
 	}
 }

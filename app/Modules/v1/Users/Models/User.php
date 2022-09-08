@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Hash;
 use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
 
 /**
+ * @property int $id
  * @property string $role
  */
 class User extends Authenticatable implements JWTSubject
@@ -35,6 +36,7 @@ class User extends Authenticatable implements JWTSubject
 	 */
 	protected $hidden = [
 		'password',
+		'email_verified_at'
 	];
 
 	#region JWT
