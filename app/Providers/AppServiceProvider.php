@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Contracts\PaginationServiceInterface;
+use App\Services\ApiPaginationService;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -13,7 +15,7 @@ class AppServiceProvider extends ServiceProvider
 	 */
 	public function register()
 	{
-		//
+		$this->app->bind(PaginationServiceInterface::class, ApiPaginationService::class);
 	}
 
 	/**
